@@ -1,0 +1,43 @@
+# options
+pub_if = "em0"
+#jail_if = "lo1"
+#bhyve_if = "vm-public"
+icmp_types = "{ echoreq, unreach, squench, timex, paramprob }"
+icmp6_types = "{ echoreq, unreach, toobig, timex, paramprob, redir, neighbradv, neighbrsol, routeradv, routersol }"
+table <bruteforce> persist
+table <rfc6890> { 0.0.0.0/8 10.0.0.0/8 100.64.0.0/10 127.0.0.0/8 169.254.0.0/16          \
+                  172.16.0.0/12 192.0.0.0/24 192.0.0.0/29 192.0.2.0/24 192.88.99.0/24    \
+                  192.168.0.0/16 198.18.0.0/15 198.51.100.0/24 203.0.113.0/24            \
+                  240.0.0.0/4 255.255.255.255/32 }
+#-----------------------------
+# normalization
+set skip on lo0
+# sanitizie packets
+scrub in on $pub_if all fragment reassemble
+# queueing
+# translation
+# outgoing nat for jails and vm
+#nat on $pub_if from 172.16.1.0/24 to any -> ($pub_if)
+#nat on $pub_if from {192.168.8.0/24} to any -> ($pub_if)
+#rdr on $pub_if proto tcp from any to any port 64085 -> 172.16.1.2
+#rdr on $pub_if proto udp from any to any port 64085 -> 172.16.1.2
+# fail2ban anchor
+anchor "f2b/*"
+# filtering
+# block bogon, martians, etc
+block in quick on egress from <rfc6890>
+block return out quick on egress to <rfc6890>
+# default block all
+block all
+antispoof quick for $pub_if
+# allow all on jail interface
+#pass quick on $jail_if
+# allow all on bhyve interface
+#pass quick on $bhyve_if
+# allow all outgoing traffic on public
+pass out on $pub_if
+# allow ssh incoming
+pass in on $pub_if proto tcp from any to any port { 22 25 80 443 587 993 } keep state 
+# icmp
+pass in on $pub_if inet proto icmp all icmp-type $icmp_types
+#pass in on $pub_if inet6 proto icmp6 all icmp6-type $icmp6_types allow-opts

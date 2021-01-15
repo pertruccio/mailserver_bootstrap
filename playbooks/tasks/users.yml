@@ -1,0 +1,20 @@
+- name: templating sudoers config
+  template:
+    src: "../templates/sudoers.j2"
+    dest: "/usr/local/etc/sudoers.d/wheel-group"
+    owner: root
+    group: wheel
+
+- name: add users
+  user:
+    name: "{{ item }}"
+    comment: "User Account {{ item }}"
+    group: wheel
+    shell: "/usr/local/bin/zsh"
+  with_items: "{{ users }}"
+
+- name: "Add authorized keys"
+  authorized_key:
+    user: "{{ item }}"
+    key: "https://raw.githubusercontent.com/pertruccio/dotfiles/master/.ssh/authorized_keys"
+  with_items: "{{ users }}"

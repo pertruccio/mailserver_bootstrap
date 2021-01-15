@@ -1,0 +1,24 @@
+
+- name: enable pf firewall in rc.conf
+  lineinfile:
+    path: /etc/rc.conf
+    regex: '^pf_enable'
+    line: 'pf_enable=YES'
+
+- name: enable pf log in rc.conf
+  lineinfile:
+    path: /etc/rc.conf
+    regex: '^pflog_enable'
+    line: 'pflog_enable=YES'
+
+- name: templating pf rules
+  template:
+      dest: /usr/local/etc/pf.conf # required. Location to render the template to on the remote machine.
+      src: templates/pf.conf.j2 # required. Path of a Jinja2 formatted template on the Ansible controller. This can be a relative or absolute path.
+      validate: pfctl -nf %s # not required. The validation command to run before copying into place. The path to the file to validate is passed in via '%s' which must be present as in the example below. The command is passed securely so shell features like expansion and pipes won't work.
+      
+- name: add pf rules in rc.conf
+  lineinfile:
+    path: /etc/rc.conf
+    regex: '^pf_rules=/usr/local/etc/pf.conf'
+    line: 'pf_rules=/usr/local/etc/pf.conf'

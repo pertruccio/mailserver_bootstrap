@@ -1,0 +1,4 @@
+- name: Install packages
+  community.general.pkgng:
+      name: nano,tmux,zsh,neofetch,coreutils,sudo,rust,zsh-syntax-highlighting,htop,bat,pftop,nginx,py37-fail2ban,py37-pip,netdata,vm-bhyve,git,lsd,ntp
+      state: present # not required. choices: present;latest;absent. State of the package.,Note: "latest" added in 2.7

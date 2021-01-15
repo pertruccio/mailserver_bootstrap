@@ -1,0 +1,45 @@
+- name: deploy oh-my-zsh
+  git: 
+    repo: "{{ oh_my_zsh_repo }}"
+    dest: "{{ ohmyzsh_install_dir }}"
+
+- name: theme install
+  git:
+    repo: "https://github.com/romkatv/powerlevel10k.git"
+    dest: "{{ ohmyzsh_install_dir }}/custom/themes/powerlevel10k"
+    depth: "1"
+
+# plugins
+- name: zsh-syntax-highlighting
+  git:
+    repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    dest: "{{ ohmyzsh_install_dir }}/custom/plugins/zsh-syntax-highlighting"
+
+- name: zsh-autosuggestions
+  git:
+    repo: "https://github.com/zsh-users/zsh-autosuggestions"
+    dest: "{{ ohmyzsh_install_dir }}/custom/plugins/zsh-autosuggestions"
+
+# templates
+- name: templating ~/.zshrc
+  template:
+    src: "templates/.zshrc_bsd.j2"
+    dest: "{{ root_home_dir if item == 'root' else home_dir ~ item }}/.zshrc"
+    backup: yes 
+  with_items: "{{ users }}"
+
+- name: copy ~/.theme.zsh
+  copy:
+    remote_src: yes
+    src: "/usr/local/src/git/.dotfiles/.theme.zsh"
+    dest: "{{ root_home_dir if item == 'root' else home_dir ~ item }}/.theme.zsh"
+    backup: yes
+  with_items: "{{ users }}"
+
+# hushlogin
+- name: disable login banner
+  copy:
+    content: ""
+    dest: "{{ root_home_dir if item == 'root' else home_dir ~ item }}/.hushlogin"
+    force: no
+  with_items: "{{ users }}"

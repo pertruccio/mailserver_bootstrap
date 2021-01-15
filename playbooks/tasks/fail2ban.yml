@@ -1,0 +1,14 @@
+- name: Activating fail2ban in rc.conf
+  lineinfile:
+    path: /etc/rc.conf
+    regex: "^fail2ban_enable="
+    line: "fail2ban_enable=YES"
+  notify: restart fail2ban
+
+- name: templating fail2ban jail conf
+  template:
+    src: "templates/fail2ban_jail.local.j2"
+    dest: "/usr/local/etc/fail2ban/jail.d/jail.local"
+    owner: root
+    group: wheel
+  notify: restart fail2ban

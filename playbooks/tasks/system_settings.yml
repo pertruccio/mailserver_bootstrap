@@ -1,0 +1,4 @@
+- name: handling /etc/hosts
+  template:
+      dest: /etc/hosts # required. Location to render the template to on the remote machine.
+      src: templates/hosts.j2 # required. Path of a Jinja2 formatted template on the Ansible controller. This can be a relative or absolute path.

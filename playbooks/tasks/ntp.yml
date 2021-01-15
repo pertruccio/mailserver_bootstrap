@@ -1,0 +1,15 @@
+- name: set ntp server
+  lineinfile:
+    path: /etc/rc.conf
+    regex: "^ntpdate_hosts"
+    line: 'ntpdate_hosts="times.tubit.tu-berlin.de"'
+
+- name: activate ntp
+  lineinfile:
+    path: /etc/rc.conf
+    regex: "^ntpdate_enable"
+    line: 'ntpdate_enable="YES"'
+
+- name: Set timezone to Europe/Berlin
+  timezone:
+    name: Europe/Berlin

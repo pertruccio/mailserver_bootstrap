@@ -1,0 +1,24 @@
+- hosts: all
+  become: true
+  vars:
+    oh_my_zsh_repo: https://github.com/robbyrussell/oh-my-zsh
+    ansible_python_interpreter: /usr/local/bin/python3.7
+    ohmyzsh_install_dir: '/usr/local/share/ohmyzsh'
+    root_home_dir: '/root'
+    home_dir: '/home/'
+    users:
+      - root
+      - admin
+      - ansible
+  handlers:
+    - include: handlers/handler.yml
+  tasks:
+    - include: tasks/system_settings.yml
+    - include: tasks/packages.yml
+    - include: tasks/users.yml
+    - include: tasks/dotfiles.yml
+    - include: tasks/ohmyzsh.yml
+    - include: tasks/firewall.yml
+    - include: tasks/fail2ban.yml
+    - include: tasks/ntp.yml
+    
