@@ -21,4 +21,4 @@
     - include: tasks/firewall.yml
     - include: tasks/fail2ban.yml
     - include: tasks/ntp.yml
-    
+    - include: tasks/disable_root_login.yml
